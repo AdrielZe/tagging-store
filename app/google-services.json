@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1064559805446",
+    "project_id": "ministoreanalytics-c3473",
+    "storage_bucket": "ministoreanalytics-c3473.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064559805446:android:c04747e2d0c21488902f87",
+        "android_client_info": {
+          "package_name": "com.example.taggingeventsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9TX1PReaduVJ0wXPRuaPxv98ikAIeG8Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
