@@ -1,5 +1,6 @@
 package com.example.taggingeventsapp
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,11 +16,16 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 
 @Composable
-fun ProductItem(product: Product, onAddToCart: (Product) -> Unit) {
+fun ProductItem(
+    product: Product,
+    onAddToCart: (Product) -> Unit,
+    onClick: (Product) -> Unit,
+) {
     Column(
         modifier = Modifier
             .width(200.dp)
             .padding(8.dp)
+            .clickable{onClick(product)}
     ) {
         AsyncImage(
             model = product.imageUrl,

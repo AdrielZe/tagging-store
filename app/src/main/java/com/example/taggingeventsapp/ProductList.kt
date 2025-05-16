@@ -8,10 +8,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ProductList(products: List<Product>, onAddToCart: (Product) -> Unit) {
+fun ProductList(
+    products: List<Product>,
+    onAddToCart: (Product) -> Unit,
+    onProductClick: (Product) -> Unit,
+) {
     LazyRow(modifier = Modifier.padding(16.dp)) {
         items(products) { product ->
-            ProductItem(product, onAddToCart)
+            ProductItem(
+                product = product,
+                onAddToCart = onAddToCart,
+                onClick = onProductClick,
+            )
         }
     }
 }

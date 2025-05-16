@@ -18,12 +18,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.taggingeventsapp.analytics.CurrencyAnalyticsHandler
 import com.google.firebase.analytics.FirebaseAnalytics
 
 class MainActivity : ComponentActivity() {
@@ -44,12 +46,57 @@ class MainActivity : ComponentActivity() {
             if (showUserDialog) {
                 UserSetupDialog { name, selected ->
                     viewModel.setUserInfo(name, selected)
+                    viewModel.setUserNameAnalytics(name)
+                    viewModel.loginEvent()
                     showUserDialog = false
                 }
             }
 
-           if (country?.code == "BR")
-               viewModel.BrazilianNationalityHandler()
+            when (country?.code) {
+                "BR" -> {
+                    viewModel.setBrazilianNationality(); viewModel.setRealCurrency();
+                }
+
+                "US" -> {
+                    viewModel.setAmericanNationality(); viewModel.setDollarCurrency()
+                }
+
+                "FR" -> {
+                    viewModel.setFrenchNationality(); viewModel.setEuroCurrency()
+                }
+
+                "DE" -> {
+                    viewModel.setGermanNationality(); viewModel.setEuroCurrency()
+                }
+
+                "JP" -> {
+                    viewModel.setJapaneseNationality(); viewModel.setYenCurrency()
+                }
+
+                "IT" -> {
+                    viewModel.setItalianNationality(); viewModel.setEuroCurrency()
+                }
+
+                "CA" -> {
+                    viewModel.setCanadianNationality(); viewModel.setCanadianDollarCurrency()
+                }
+
+                "MX" -> {
+                    viewModel.setMexicanNationality(); viewModel.setMexicanPesoCurrency()
+                }
+
+                "AR" -> {
+                    viewModel.setArgentineNationality(); viewModel.setArgentinePesoCurrency()
+                }
+
+                "IN" -> {
+                    viewModel.setIndianNationality(); viewModel.setRupeeCurrency()
+                }
+            }
+
+            //inserir aqui evento de login
+            println(country?.code)
+
 
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
@@ -67,7 +114,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                Text("Lojinha Compose", fontSize = 24.sp)
+                Text("Lojinha Natura Analytics", fontSize = 24.sp)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -87,14 +134,20 @@ class MainActivity : ComponentActivity() {
 
                     }
                 } else {
-                    ProductList(products) { product ->
-                        viewModel.addToCart(product)
-                        Toast.makeText(
-                            this@MainActivity,
-                            "${product.name} adicionado ao carrinho",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    ProductList(
+                        products = products,
+                        onAddToCart = { product ->
+                            viewModel.addToCart(product)
+                            Toast.makeText(
+                                this@MainActivity,
+                                "${product.name} adicionado ao carrinho",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                        onProductClick = { product ->
+                            viewModel.logProductSelected(product)
+                        }
+                    )
                 }
             }
         }
