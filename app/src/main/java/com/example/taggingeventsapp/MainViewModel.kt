@@ -13,6 +13,9 @@ import com.google.firebase.analytics.FirebaseAnalytics
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.lang.reflect.Array
+import kotlin.collections.map
+import kotlin.collections.sumOf
 
 class MainViewModel : ViewModel() {
 
@@ -128,7 +131,63 @@ class MainViewModel : ViewModel() {
             firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
     }
 
-    fun logAddPaymentInfo(products : List<Product>){
+    fun logAddPaymentInfo(products : List<Product>, option : String){
+        val items = products.map { product ->
+            Bundle().apply {
+                putString(FirebaseAnalytics.Param.ITEM_ID, product.id.toString())
+                putString(FirebaseAnalytics.Param.ITEM_NAME, product.name)
+                putDouble(FirebaseAnalytics.Param.PRICE, product.price)
+                putInt(FirebaseAnalytics.Param.QUANTITY, 1)
+            }
+        }
+
+        val bundle = Bundle().apply {
+            putString(FirebaseAnalytics.Param.CURRENCY, currency)
+            putString("payment_method", option)
+            putDouble(FirebaseAnalytics.Param.VALUE, products.sumOf { it.price })
+            putParcelableArrayList(FirebaseAnalytics.Param.ITEMS, ArrayList(items))
+        }
+
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_PAYMENT_INFO, bundle)
+    }
+
+    fun logViewCart(products : List<Product>){
+        val items = products.map {
+            product ->
+            Bundle().apply {
+                putString(FirebaseAnalytics.Param.ITEM_ID, product.id.toString())
+                putString(FirebaseAnalytics.Param.ITEM_NAME, product.name)
+                putDouble(FirebaseAnalytics.Param.PRICE, product.price)
+                putInt(FirebaseAnalytics.Param.QUANTITY, 1)
+            }
+        }
+        val bundle = Bundle().apply {
+            putString(FirebaseAnalytics.Param.CURRENCY, currency)
+            putDouble(FirebaseAnalytics.Param.VALUE, products.sumOf { it.price })
+            putParcelableArrayList(FirebaseAnalytics.Param.ITEMS, ArrayList(items))
+        }
+
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_CART, bundle)
+    }
+
+    fun logViewItemList(products : List<Product>){
+        val items = products.map {
+            product ->
+                Bundle().apply {
+                    putString(FirebaseAnalytics.Param.ITEM_ID, product.id.toString())
+                    putString(FirebaseAnalytics.Param.ITEM_NAME, product.name)
+                }
+        }
+
+        val bundle = Bundle().apply{
+            putString(FirebaseAnalytics.Param.CURRENCY, currency)
+            putParcelableArrayList(FirebaseAnalytics.Param.ITEMS, ArrayList(items))
+        }
+
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
+    }
+
+    fun logGenerateLead(products : List<Product>){
         val items = products.map { product ->
             Bundle().apply {
                 putString(FirebaseAnalytics.Param.ITEM_ID, product.id.toString())
@@ -144,7 +203,27 @@ class MainViewModel : ViewModel() {
             putParcelableArrayList(FirebaseAnalytics.Param.ITEMS, ArrayList(items))
         }
 
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_PAYMENT_INFO, bundle)
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.GENERATE_LEAD, bundle)
+    }
+
+    fun logAddShippingInfo(products: List<Product>, info : String){
+        val items = products.map { product ->
+            Bundle().apply {
+                putString(FirebaseAnalytics.Param.ITEM_ID, product.id.toString())
+                putString(FirebaseAnalytics.Param.ITEM_NAME, product.name)
+                putDouble(FirebaseAnalytics.Param.PRICE, product.price)
+                putInt(FirebaseAnalytics.Param.QUANTITY, 1)
+            }
+        }
+
+        val bundle = Bundle().apply {
+            putString(FirebaseAnalytics.Param.CURRENCY, currency)
+            putString("shipping_info", info)
+            putDouble(FirebaseAnalytics.Param.VALUE, products.sumOf { it.price })
+            putParcelableArrayList(FirebaseAnalytics.Param.ITEMS, ArrayList(items))
+        }
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_SHIPPING_INFO, bundle)
+
     }
 
     var userName by mutableStateOf("")
@@ -155,7 +234,6 @@ class MainViewModel : ViewModel() {
         userName = name
         selectedCountry = country
     }
-
 
     fun loginEvent() {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, null)

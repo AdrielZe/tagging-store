@@ -100,9 +100,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            println(country?.code)
-
-
+            viewModel.logViewItemList(products)
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     Modifier.fillMaxWidth(),
@@ -124,7 +122,12 @@ class MainActivity : ComponentActivity() {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Button(onClick = { showCart = !showCart }) {
-                    Text(if (showCart) "Ver catálogo" else "Ver carrinho (${cart.size})")
+                    if (showCart)
+                        viewModel.logViewCart(cart)
+                    Text(if (showCart) {
+                        "Ver catálogo"
+                    }
+                    else "Ver carrinho (${cart.size})")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
