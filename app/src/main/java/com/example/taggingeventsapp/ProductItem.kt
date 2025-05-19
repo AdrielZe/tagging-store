@@ -19,6 +19,7 @@ import coil.compose.AsyncImage
 fun ProductItem(
     product: Product,
     onAddToCart: (Product) -> Unit,
+    onAddToWishlist: (Product) -> Unit,
     onClick: (Product) -> Unit,
 ) {
     Column(
@@ -39,6 +40,9 @@ fun ProductItem(
         Text("R$ %.2f".format(product.price))
         Button(onClick = { onAddToCart(product) }, modifier = Modifier.padding(top = 4.dp)) {
             Text("Adicionar")
+        }
+        Button(onClick = { onAddToWishlist(product) }, modifier = Modifier.padding(top = 4.dp)) {
+            Text("❤\uFE0F")
         }
     }
 }

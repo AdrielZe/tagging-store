@@ -6,4 +6,5 @@ data class Product(
     val price: Double,
     val imageUrl: String,
     val type: String,
+    var isOnWishList: Boolean
 )

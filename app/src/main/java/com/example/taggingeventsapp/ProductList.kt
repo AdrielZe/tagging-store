@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 fun ProductList(
     products: List<Product>,
     onAddToCart: (Product) -> Unit,
+    onAddToWishlist: (Product) -> Unit,
     onProductClick: (Product) -> Unit,
 ) {
     LazyRow(modifier = Modifier.padding(16.dp)) {
@@ -19,6 +20,7 @@ fun ProductList(
                 product = product,
                 onAddToCart = onAddToCart,
                 onClick = onProductClick,
+                onAddToWishlist = onAddToWishlist,
             )
         }
     }

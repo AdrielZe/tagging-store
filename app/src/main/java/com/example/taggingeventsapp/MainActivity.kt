@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.taggingeventsapp.CheckoutScreen
+
 import com.example.taggingeventsapp.analytics.CurrencyAnalyticsHandler
 import com.google.firebase.analytics.FirebaseAnalytics
 
@@ -32,12 +34,16 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             viewModel.initAnalytics(FirebaseAnalytics.getInstance(this))
             val products by viewModel.products.collectAsState()
             val cart by viewModel.cart.collectAsState()
+            var showCheckout by remember { mutableStateOf(false) }
             var showCart by remember { mutableStateOf(false) }
             var showUserDialog by remember { mutableStateOf(true) }
             val userName = viewModel.userName
@@ -94,7 +100,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            //inserir aqui evento de login
             println(country?.code)
 
 
@@ -124,32 +129,81 @@ class MainActivity : ComponentActivity() {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (showCart) {
-                    if (cart.isEmpty()) {
-                        Text("Carrinho vazio.")
-                    } else {
-                        CartList(cart) { product ->
-                            viewModel.removeFromCart(product)
-                        }
-
+                when {
+                    showCheckout -> {
+                        CheckoutScreen(
+                            cart = cart,
+                            onConfirm = { address, payment ->
+                              //  viewModel.completePurchase(cart, address, payment)
+                                showCheckout = false
+                                showCart = false
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Compra finalizada com sucesso!",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            },
+                            onBack = {
+                                showCheckout = false
+                            },
+                            viewModel = viewModel
+                        )
                     }
-                } else {
-                    ProductList(
-                        products = products,
-                        onAddToCart = { product ->
-                            viewModel.addToCart(product)
-                            Toast.makeText(
-                                this@MainActivity,
-                                "${product.name} adicionado ao carrinho",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
-                        onProductClick = { product ->
-                            viewModel.logProductSelected(product)
+
+                    showCart -> {
+                        if (cart.isEmpty()) {
+                            Text("Carrinho vazio.")
+                        } else {
+                            CartList(cart) { product ->
+                                viewModel.removeFromCart(product)
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Button(onClick = {
+                                viewModel.logBeginCheckout(cart)
+                                showCheckout = true
+                            }) {
+                                Text("Fazer checkout")
+                            }
                         }
-                    )
+                    }
+
+                    else -> {
+                        ProductList(
+                            products = products,
+                            onAddToCart = { product ->
+                                viewModel.addToCart(product)
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "${product.name} adicionado ao carrinho",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            onProductClick = { product ->
+                                viewModel.logProductSelected(product)
+                            },
+                            onAddToWishlist = { product ->
+                                if (viewModel.clickWishlistButton(product)) {
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        "${product.name} adicionado à lista de desejos",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        "${product.name} removido da lista de desejos",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        )
+                    }
                 }
+
+                }
+
             }
         }
     }
-}

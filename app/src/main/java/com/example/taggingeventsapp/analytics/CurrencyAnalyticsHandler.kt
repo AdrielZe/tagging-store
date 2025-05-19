@@ -1,5 +1,7 @@
 package com.example.taggingeventsapp.analytics;
 
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.taggingeventsapp.MainViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 
 class CurrencyAnalyticsHandler (private val firebaseAnalytics: FirebaseAnalytics) {
